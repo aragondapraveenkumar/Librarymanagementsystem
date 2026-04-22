@@ -21,7 +21,7 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.comparePassword = function(plain) {
   return bcrypt.compare(plain, this.password);
 };
-
+//hello from praveen
 // Don't return password in JSON
 userSchema.methods.toJSON = function() {
   const obj = this.toObject();
