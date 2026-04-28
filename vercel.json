@@ -3,11 +3,6 @@
   "version": 2,
   "buildCommand": "cd client && npm run build",
   "outputDirectory": "client/build",
-  "functions": {
-    "server/vercel.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",

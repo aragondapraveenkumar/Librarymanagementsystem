@@ -1,7 +1,10 @@
 {
   "name": "vemu-library-system",
   "version": "1.0.0",
-  "description": "VEMU Library System — React + Node.js + MongoDB",
+  "description": "VEMU Library System - React + Node.js + MongoDB",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "install:all": "cd server && npm install && cd ../client && npm install",
     "dev:server": "cd server && npm run dev",
