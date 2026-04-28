@@ -1,6 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const mongoose = require('mongoose');
+const dns = require('dns');
 const cors = require('cors');
 
 const app = express();
@@ -32,7 +34,11 @@ app.use('/api/library', require('./routes/library'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
-const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/vemu_library';
+const MONGO_URI = process.env.MONGODB_URI;
+
+if (!MONGO_URI) {
+  throw new Error('MONGODB_URI is missing. Add your MongoDB Atlas URI in server/.env');
+}
 
 let connectionPromise;
 let seedPromise;
@@ -63,7 +69,19 @@ async function seedDatabase() {
 
 async function ensureDatabase() {
   if (!connectionPromise) {
-    connectionPromise = mongoose.connect(MONGO_URI);
+    connectionPromise = mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 10000 }).catch(async (err) => {
+      const isSrvDnsIssue = MONGO_URI.startsWith('mongodb+srv://') && (
+        String(err?.message || '').includes('querySrv') ||
+        err?.code === 'ECONNREFUSED' ||
+        err?.code === 'ENOTFOUND' ||
+        err?.code === 'ETIMEOUT'
+      );
+
+      if (!isSrvDnsIssue) throw err;
+
+      dns.setServers(['8.8.8.8', '1.1.1.1']);
+      return mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 15000 });
+    });
   }
   await connectionPromise;
 

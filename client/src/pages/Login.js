@@ -50,23 +50,6 @@ export default function Login() {
             {loading ? 'LOGGING IN...' : 'LOGIN'}
           </button>
         </form>
-
-        {/* Demo credentials */}
-        <div className="glass-light" style={{ marginTop:'1.5rem', padding:'1rem', borderRadius:'1rem', fontSize:'0.8rem' }}>
-          <p style={{ fontWeight:700, marginBottom:'0.5rem', color:'#FFB347' }}>🔑 Demo Credentials</p>
-          {[['admin','admin123','Admin'],['librarian','lib123','Librarian'],['student1','stud123','Student'],['faculty1','fac123','Faculty']].map(([u,p,r]) => (
-            <div key={u} onClick={() => setForm({ username: u, password: p })}
-              style={{ display:'flex', gap:'0.75rem', padding:'0.3rem 0.5rem', borderRadius:'0.5rem', cursor:'pointer', transition:'background 0.2s' }}
-              onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.1)'}
-              onMouseLeave={e => e.currentTarget.style.background='transparent'}>
-              <span style={{ opacity:0.5, width:70 }}>{u}</span>
-              <span style={{ opacity:0.5, width:70 }}>{p}</span>
-              <span style={{ color:'#FFD966', fontWeight:700, fontSize:'0.7rem' }}>{r}</span>
-            </div>
-          ))}
-          <p style={{ opacity:0.5, fontSize:'0.7rem', marginTop:'0.5rem' }}>Click any row to autofill</p>
-        </div>
-
         <p style={{ textAlign:'center', marginTop:'1.5rem', fontSize:'0.9rem', opacity:0.8 }}>
           No account? <Link to="/register" style={{ color:'#FFB347', fontWeight:600 }}>Register here</Link>
         </p>
@@ -74,3 +57,4 @@ export default function Login() {
     </div>
   );
 }
+

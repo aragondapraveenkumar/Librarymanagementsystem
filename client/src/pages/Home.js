@@ -6,6 +6,35 @@ export default function Home() {
   const navigate = useNavigate();
   const [aboutOpen, setAboutOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [activeInfo, setActiveInfo] = useState('Features');
+  const [infoOpen, setInfoOpen] = useState(false);
+
+  const infoCards = {
+    Features: [
+      'Role-based access for Admin, Librarian, Faculty, and Students',
+      'Issue and return tracking with fine handling',
+      'Secure login with JWT and protected routes',
+      'Book recommendation and request management'
+    ],
+    Catalogue: [
+      'Search by title, author, ISBN, and subject',
+      'Track total and available copies in real time',
+      'Store edition, publication details, and tags',
+      'Quick filters for availability and category'
+    ],
+    Academics: [
+      'Supports semester-wise and subject-wise references',
+      'Helps students and faculty access course resources',
+      'Centralized records for academic reading materials',
+      'Improves library usage across programs'
+    ],
+    Departments: [
+      'Department-specific collections for focused learning',
+      'Separate tracking for requests and circulation patterns',
+      'Easy collaboration between librarians and faculty',
+      'Scalable structure for adding new departments'
+    ]
+  };
 
   return (
     <div className="min-h-screen">
@@ -13,6 +42,10 @@ export default function Home() {
         showAuthButtons
         onAboutClick={() => setAboutOpen(true)}
         onContactClick={() => setContactOpen(true)}
+        onInfoClick={(item) => {
+          setActiveInfo(item);
+          setInfoOpen(true);
+        }}
       />
 
       {/* Hero */}
@@ -49,6 +82,7 @@ export default function Home() {
                 </span>
               ))}
             </div>
+
           </div>
         </div>
       </div>
@@ -82,6 +116,20 @@ export default function Home() {
               </div>
             ))}
             <button onClick={() => setContactOpen(false)} className="btn-ghost" style={{ width:'100%', marginTop:'1.5rem' }}>CLOSE</button>
+          </div>
+        </div>
+      )}
+
+      {infoOpen && (
+        <div onClick={() => setInfoOpen(false)} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:9999 }}>
+          <div onClick={e => e.stopPropagation()} className="glass" style={{ maxWidth:560, width:'90%', borderRadius:'1.5rem', padding:'2rem' }}>
+            <h2 className="title-font" style={{ fontSize:'1.75rem', marginBottom:'0.75rem' }}>{activeInfo}</h2>
+            {infoCards[activeInfo].map((line) => (
+              <div key={line} style={{ fontSize:'0.95rem', opacity:0.9, lineHeight:1.7 }}>
+                - {line}
+              </div>
+            ))}
+            <button onClick={() => setInfoOpen(false)} className="btn-ghost" style={{ width:'100%', marginTop:'1.5rem' }}>CLOSE</button>
           </div>
         </div>
       )}

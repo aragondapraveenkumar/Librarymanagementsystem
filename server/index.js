@@ -1,6 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const mongoose = require('mongoose');
+const dns = require('dns');
 const cors = require('cors');
 
 const app = express();
@@ -45,15 +47,44 @@ async function seedDatabase() {
 }
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/vemu_library';
+const MONGO_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGO_URI)
-  .then(async () => {
+if (!MONGO_URI) {
+  console.error('MONGODB_URI is missing. Add your MongoDB Atlas URI in server/.env');
+  process.exit(1);
+}
+
+async function connectMongo() {
+  try {
+    await mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 10000 });
     console.log('MongoDB connected:', MONGO_URI.replace(/\/\/.*@/, '//***@'));
     await seedDatabase();
     app.listen(PORT, () => console.log(`VEMU Library Server running on http://localhost:${PORT}`));
-  })
-  .catch(err => {
+  } catch (err) {
+    const isSrvDnsIssue = MONGO_URI.startsWith('mongodb+srv://') && (
+      String(err?.message || '').includes('querySrv') ||
+      err?.code === 'ECONNREFUSED' ||
+      err?.code === 'ENOTFOUND' ||
+      err?.code === 'ETIMEOUT'
+    );
+
+    if (isSrvDnsIssue) {
+      try {
+        dns.setServers(['8.8.8.8', '1.1.1.1']);
+        await mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 15000 });
+        console.log('MongoDB connected after DNS fallback');
+        await seedDatabase();
+        app.listen(PORT, () => console.log(`VEMU Library Server running on http://localhost:${PORT}`));
+        return;
+      } catch (fallbackErr) {
+        console.error('MongoDB connection failed after DNS fallback:', fallbackErr.message);
+        process.exit(1);
+      }
+    }
+
     console.error('MongoDB connection failed:', err.message);
     process.exit(1);
-  });
+  }
+}
+
+connectMongo();
