@@ -47,10 +47,10 @@ async function seedDatabase() {
 }
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGODB_URI;
+const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI;
 
 if (!MONGO_URI) {
-  console.error('MONGODB_URI is missing. Add your MongoDB Atlas URI in server/.env');
+  console.error('MONGODB_URI or MONGO_URI is missing. Add your MongoDB Atlas URI in environment variables.');
   process.exit(1);
 }
 

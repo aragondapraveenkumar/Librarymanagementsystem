@@ -34,10 +34,10 @@ app.use('/api/library', require('./routes/library'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
-const MONGO_URI = process.env.MONGODB_URI;
+const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI;
 
 if (!MONGO_URI) {
-  throw new Error('MONGODB_URI is missing. Add your MongoDB Atlas URI in server/.env');
+  throw new Error('MONGODB_URI or MONGO_URI is missing. Add your MongoDB Atlas URI in Vercel environment variables.');
 }
 
 let connectionPromise;
