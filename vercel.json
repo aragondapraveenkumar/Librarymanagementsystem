@@ -6,10 +6,6 @@
   "outputDirectory": "client/build",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server/vercel.js"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
